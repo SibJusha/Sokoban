@@ -36,17 +36,11 @@ public class MenuScreen : Screen
     {
         UpdateEntriesPositions();
 
-        var spriteBatch = ScreenManager.SpriteBatch;
-
-        spriteBatch.Begin();
-
         for (var i = 0; i < menuEntries.Count; ++i)
         {
             var entry = menuEntries[i];
             entry.Draw(this, i == selectedEntry, gameTime);
         }
-
-        spriteBatch.End();
     }
 
     public override void Update(GameTime gameTime)

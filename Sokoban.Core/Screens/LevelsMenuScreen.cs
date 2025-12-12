@@ -21,8 +21,4 @@ public class LevelsMenuScreen : MenuScreen
     //         activeScreen.LoadContent();
     //     }
     // }
-
-    /// <summary>
-    /// Unloads content for the screen manager and the currently active screen if one exists.
-    /// </summary>
 }

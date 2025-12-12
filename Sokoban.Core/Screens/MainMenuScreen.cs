@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Sokoban.Core.Managers;
-// using MonoGame.Extended.Screens;
 
 namespace Sokoban.Core.Screens;
 
@@ -22,7 +21,7 @@ public class MainMenuScreen : MenuScreen
         // TODO: show levels screen
         // ScreenManager.ShowScreen(this);
         // ScreenManager.ShowScreen(new LevelsMenuScreen(Game));
-        ScreenManager.ShowScreen(new LevelScreen(Game, Game.LevelManager.LevelsMap["1"]));
+        ScreenManager.ShowScreen(new LevelScreen(Game, Game.LevelManager.LevelsMap["lvl0"]));
     }
 
     private void EditorEntrySelected(object sender, EventArgs e)

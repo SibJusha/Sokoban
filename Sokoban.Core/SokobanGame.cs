@@ -1,15 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using static System.Net.Mime.MediaTypeNames;
-using System.ComponentModel;
-using System.Runtime.Serialization;
 using Sokoban.Core.Localization;
 using Sokoban.Core.Managers;
 using Sokoban.Core.Screens;
+using Sokoban.Core.Logic;
 
 namespace Sokoban.Core;
 
@@ -63,6 +59,8 @@ public class SokobanGame : Game
         base.LoadContent();
 
         LevelManager.PreloadLevels();
+        TileCreator.Font = Content.Load<SpriteFont>("Fonts/Tiles");
+        EntityCreator.Font = Content.Load<SpriteFont>("Fonts/Tiles");
     }
 
     protected override void Update(GameTime gameTime)
@@ -72,7 +70,7 @@ public class SokobanGame : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.MonoGameOrange);
+        GraphicsDevice.Clear(Color.DarkGray);
 
         base.Draw(gameTime);
     }

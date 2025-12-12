@@ -18,9 +18,7 @@ public class MessageScreen : Screen
         var font = ScreenManager.Font;
         var position = new Vector2(ScreenManager.ScreenSize.X / 2 - font.MeasureString(message).X / 2, 200);
 
-        spriteBatch.Begin();
         spriteBatch.DrawString(font, message, position, Color.White);
-        spriteBatch.End();
     }
 
     public override void HandleInput(GameTime gameTime, InputManager inputManager)

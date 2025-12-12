@@ -1,5 +1,7 @@
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Sokoban.Core.Logic;
 
 namespace Sokoban.Core.Managers;
 
@@ -17,6 +19,21 @@ public class InputManager
 
     private MouseState currentMouseState = new();
     private MouseState prevMouseState = new();
+
+    public Direction GetDirection()
+    {
+        var pressed = new[]
+        {
+            (Keys.Up,    Direction.Up),    (Keys.W, Direction.Up),
+            (Keys.Down,  Direction.Down),  (Keys.S, Direction.Down),
+            (Keys.Left,  Direction.Left),  (Keys.A, Direction.Left),
+            (Keys.Right, Direction.Right), (Keys.D, Direction.Right)
+        };
+
+        var active = pressed.Where(k => IsKeyPressed(k.Item1)).ToList();
+
+        return active.Count >= 2 ? Direction.None : active.FirstOrDefault().Item2;
+    }
 
     public void Update(GameTime gameTime)
     {

@@ -141,10 +141,12 @@ public class ScreenManager : DrawableGameComponent
 
     public override void Draw(GameTime gameTime)
     {
-        foreach (var screen in screens)
+        SpriteBatch.Begin();
+        foreach (var screen in screensToUpdate)
         {
             if (screen.IsActive || screen.DrawWhenInactive)
                 screen.Draw(gameTime);
         }
+        SpriteBatch.End();
     }    
 }

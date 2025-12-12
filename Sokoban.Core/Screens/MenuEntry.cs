@@ -6,14 +6,6 @@ namespace Sokoban.Core.Screens;
 
 public class MenuEntry
 {
-    /// <summary>
-    /// Tracks a fading selection effect on the entry.
-    /// </summary>
-    /// <remarks>
-    /// The entries transition out of the selection effect when they are deselected.
-    /// </remarks>
-    // float selectionFade;
-
     string text;
     public string Text
     {
@@ -36,7 +28,6 @@ public class MenuEntry
     }
 
     public event EventHandler<EventArgs> Selected;
-    // public event EventHandler<PlayerIndexEventArgs> Selected;
 
     protected internal virtual void OnSelectEntry(PlayerIndex playerIndex)
     {
@@ -63,15 +54,6 @@ public class MenuEntry
 
     public virtual void Update(MenuScreen screen, bool isSelected, GameTime gameTime)
     {
-        // When the menu selection changes, entries gradually fade between
-        // their selected and deselected appearance, rather than instantly
-        // popping to the new state.
-        // float fadeSpeed = (float)gameTime.ElapsedGameTime.TotalSeconds * 4;
-
-        // if (isSelected)
-            // selectionFade = Math.Min(selectionFade + fadeSpeed, 1);
-        // else
-            // selectionFade = Math.Max(selectionFade - fadeSpeed, 0);
     }
 
 
@@ -83,26 +65,10 @@ public class MenuEntry
         else
             color = Color.Gray;
 
-        // Pulsate the size of the selected menu entry.
-        double time = gameTime.TotalGameTime.TotalSeconds;
-
-        // float pulsate = (float)Math.Sin(time * 6) + 1;
-
-        // float scale = 1 + pulsate * 0.05f * selectionFade;
-
-        // Modify the alpha to fade text out during transitions.
-        // color *= screen.TransitionAlpha;
-
-        // Draw text, centered on the middle of each line.
         var screenManager = screen.ScreenManager;
         var spriteBatch = screenManager.SpriteBatch;
         var font = screen.Font;
-
-        // Vector2 origin = new Vector2(0, font.LineSpacing / 2);
-
         spriteBatch.DrawString(font, text, position, color);
-        // spriteBatch.DrawString(font, text, position, color, 0,
-        //                        origin, 0, SpriteEffects.None, 0);
     }
 
     public virtual int GetHeight(MenuScreen screen)

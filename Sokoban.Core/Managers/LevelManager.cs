@@ -15,13 +15,13 @@ public class LevelManager
         this.game = game;
     }
 
-    public bool LoadLevel(string levelName)
-    {
-        if (LevelsMap.TryGetValue(levelName, out var level))
-            return level.LoadContent();
+    // public bool LoadLevel(string levelName)
+    // {
+    //     if (LevelsMap.TryGetValue(levelName, out var level))
+    //         return level.LoadContent();
 
-        return false;
-    }
+    //     return false;
+    // }
 
     public void PreloadLevels()
     {
