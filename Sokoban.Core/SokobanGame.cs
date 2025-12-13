@@ -14,8 +14,6 @@ public class SokobanGame : Game
     private readonly GraphicsDeviceManager graphicsDeviceManager;
     public ScreenManager ScreenManager { get; private init; }
     public LevelManager LevelManager { get; private init; }
-
-    // public SpriteBatch SpriteBatch { get; private init; }
     
     public SokobanGame()
     {
@@ -23,11 +21,12 @@ public class SokobanGame : Game
 
         graphicsDeviceManager = new GraphicsDeviceManager(this);
         Services.AddService(graphicsDeviceManager);
-        graphicsDeviceManager.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
+        graphicsDeviceManager.SupportedOrientations = 
+            DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
+        graphicsDeviceManager.PreferredBackBufferWidth = 1280;
+        graphicsDeviceManager.PreferredBackBufferHeight = 720;
 
-        // SpriteBatch = new SpriteBatch(graphicsDeviceManager.GraphicsDevice);
-
-        ScreenManager = new ScreenManager(this);
+        ScreenManager = new ScreenManager(this, graphicsDeviceManager);
         Components.Add(ScreenManager); 
 
         LevelManager = new LevelManager(this);

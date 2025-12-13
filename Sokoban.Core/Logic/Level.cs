@@ -92,12 +92,14 @@ public class Level
     {
     }
 
-    public void HandleInput(GameTime gameTime, InputManager inputManager)
+    public bool MakeMovement(GameTime gameTime, InputManager inputManager)
     {
         var direction = inputManager.GetDirection();
     
-        if (direction != Direction.None)
-            TryMoveThere(player, direction, 2);
+        if (direction == Direction.None)
+            return false;
+        
+        return TryMoveThere(player, direction, 2);
     }
 
     public void UnloadContent()

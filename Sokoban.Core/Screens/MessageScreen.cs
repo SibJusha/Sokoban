@@ -16,7 +16,9 @@ public class MessageScreen : Screen
     {
         var spriteBatch = ScreenManager.SpriteBatch;
         var font = ScreenManager.Font;
-        var position = new Vector2(ScreenManager.ScreenSize.X / 2 - font.MeasureString(message).X / 2, 200);
+        var position = new Vector2(
+            (ScreenManager.ScreenSize.X - font.MeasureString(message).X) / 2, 
+            (ScreenManager.ScreenSize.Y - font.MeasureString(message).Y) / 2);
 
         spriteBatch.DrawString(font, message, position, Color.White);
     }

@@ -7,6 +7,7 @@ namespace Sokoban.Core.Managers;
 
 public class ScreenManager : DrawableGameComponent
 {
+    private GraphicsDeviceManager graphicsDeviceManager;
     private List<Screen> screens = [];
     private List<Screen> screensToUpdate = [];
 
@@ -15,19 +16,18 @@ public class ScreenManager : DrawableGameComponent
 
     public Screen ActiveScreen => activeScreen;
 
-    private Vector2 screenSize = new(800, 600);
-    public Vector2 ScreenSize
-    {
-        get => screenSize;
-        set => screenSize = value;
-    }
+    public Vector2 ScreenSize => 
+        new(graphicsDeviceManager.PreferredBackBufferWidth,
+            graphicsDeviceManager.PreferredBackBufferHeight);
 
     public SpriteFont Font { get; private set; }
 
     private readonly InputManager inputManager = new();
 
-    public ScreenManager(Game game) : base(game)
+    public ScreenManager(Game game, GraphicsDeviceManager graphicsDeviceManager) 
+        : base(game)
     {
+        this.graphicsDeviceManager = graphicsDeviceManager;
     }
 
     public override void Initialize()

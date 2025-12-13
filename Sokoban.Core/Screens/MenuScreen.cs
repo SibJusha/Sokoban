@@ -55,7 +55,11 @@ public class MenuScreen : Screen
 
     private void UpdateEntriesPositions()
     {
-        var position = new Vector2(0, 200);
+        var totalHeight = 0f;
+        foreach (var entry in menuEntries)
+            totalHeight += entry.GetHeight(this);
+
+        var position = new Vector2(0, (ScreenManager.ScreenSize.Y - totalHeight) / 2);
 
         foreach (var entry in menuEntries)
         {
