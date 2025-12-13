@@ -8,10 +8,12 @@ namespace Sokoban.Core.Screens;
 
 public class MenuScreen : Screen 
 {
-    private int selectedEntry = 0; 
-
     protected List<MenuEntry> menuEntries;
     public IList<MenuEntry> MenuEntries => menuEntries;
+    protected int selectedEntry = 0; 
+    private int topVisibleIndex = 0;
+    private int maxVisibleEntries;
+    private int entryHeight;
 
     public SpriteFont Font { get; set; }
 
@@ -27,6 +29,13 @@ public class MenuScreen : Screen
         Font = game.ScreenManager.Font;
     }
 
+    public override void Initialize()
+    {
+        base.Initialize();
+        entryHeight = Font.LineSpacing;
+        RecalculateVisibleCount();
+    }
+
     public override void LoadContent()
     {
         base.LoadContent();
@@ -36,11 +45,15 @@ public class MenuScreen : Screen
     {
         UpdateEntriesPositions();
 
-        for (var i = 0; i < menuEntries.Count; ++i)
+        int start = topVisibleIndex;
+        int end = Math.Min(topVisibleIndex + maxVisibleEntries, menuEntries.Count);
+
+        for (var i = start; i < end; ++i)
         {
-            var entry = menuEntries[i];
-            entry.Draw(this, i == selectedEntry, gameTime);
+            menuEntries[i].Draw(this, i == selectedEntry, gameTime);
         }
+
+        DrawScrollbar();
     }
 
     public override void Update(GameTime gameTime)
@@ -50,22 +63,6 @@ public class MenuScreen : Screen
         foreach (var entry in menuEntries)
         {
             entry.Update(this, false, gameTime);
-        }
-    }
-
-    private void UpdateEntriesPositions()
-    {
-        var totalHeight = 0f;
-        foreach (var entry in menuEntries)
-            totalHeight += entry.GetHeight(this);
-
-        var position = new Vector2(0, (ScreenManager.ScreenSize.Y - totalHeight) / 2);
-
-        foreach (var entry in menuEntries)
-        {
-            position.X = ScreenManager.ScreenSize.X / 2 - entry.GetWidth(this) / 2;
-            entry.Position = position;
-            position.Y += entry.GetHeight(this); 
         }
     }
 
@@ -81,10 +78,11 @@ public class MenuScreen : Screen
             if (nextSelectedEntry > 0)
                 nextSelectedEntry--;
 
-            while (!menuEntries[nextSelectedEntry].Enabled && nextSelectedEntry > 0)
+            while (nextSelectedEntry > 0 && !menuEntries[nextSelectedEntry].Enabled)
                 nextSelectedEntry--;
 
             selectedEntry = nextSelectedEntry;
+            EnsureSelectedIsVisible();
         }
 
         if (inputManager.IsDown())
@@ -95,17 +93,75 @@ public class MenuScreen : Screen
                 nextSelectedEntry++;
 
             selectedEntry = SetNextEnabledEntry(nextSelectedEntry);
+            EnsureSelectedIsVisible();
         }
 
         if (inputManager.IsSelected())
-            OnSelectEntry(selectedEntry);
+            OnSelectEntry();
         if (inputManager.IsCanceled())
             Exit();
     }
 
-    protected virtual void OnSelectEntry(int selectedEntry)
+    protected virtual void OnSelectEntry()
     {
-        menuEntries[selectedEntry].OnSelection();
+        if (selectedEntry >= 0 && selectedEntry < menuEntries.Count)
+            menuEntries[selectedEntry].OnSelection();
+    }
+
+    private void EnsureSelectedIsVisible()
+    {
+        if (selectedEntry < topVisibleIndex)
+            topVisibleIndex = selectedEntry;
+        else if (selectedEntry >= topVisibleIndex + maxVisibleEntries)
+            topVisibleIndex = Math.Max(0, selectedEntry - maxVisibleEntries + 1);
+    }
+
+    private void RecalculateVisibleCount()
+    {
+        var availableHeight = ScreenManager.ScreenSize.Y * 0.75f;
+        maxVisibleEntries = Math.Max(1, (int)(availableHeight / entryHeight));
+    }
+
+    private void UpdateEntriesPositions()
+    {
+        var visibleCount = Math.Min(maxVisibleEntries, 
+            menuEntries.Count - topVisibleIndex);
+        var totalHeight = visibleCount * entryHeight;
+        var curY = (ScreenManager.ScreenSize.Y - totalHeight) / 2;
+
+        for (var i = 0; i < visibleCount; ++i)
+        {
+            var globalIdx = topVisibleIndex + i;
+            var entry = menuEntries[globalIdx];
+            var width = entry.GetWidth(this);
+            var x = ScreenManager.ScreenSize.X / 2f - width / 2f;
+            entry.Position = new Vector2(x, curY);
+            curY += entry.GetHeight(this);
+        } 
+    }
+
+    private void DrawScrollbar()
+    {
+        if (menuEntries.Count <= maxVisibleEntries) 
+            return;
+
+        var spriteBatch = ScreenManager.SpriteBatch;
+        var trackX = (int)ScreenManager.ScreenSize.X - 50;
+        var trackTop = ScreenManager.ScreenSize.Y * 0.15f;
+        var trackHeight = ScreenManager.ScreenSize.Y * 0.7f;
+
+        spriteBatch.Draw(ScreenManager.WhitePixel,
+            new Rectangle(trackX, (int)trackTop, 12, (int)trackHeight),
+            Color.Black);
+
+        var ratio = (float)topVisibleIndex / (menuEntries.Count - maxVisibleEntries);
+        var thumbHeight = maxVisibleEntries / (float)menuEntries.Count * trackHeight;
+        thumbHeight = Math.Max(30, thumbHeight);
+        var thumbY = trackTop + ratio * (trackHeight - thumbHeight);
+
+        spriteBatch.Draw(ScreenManager.WhitePixel,
+            new Rectangle(trackX + 2, (int)thumbY + 2, 8, (int)thumbHeight),
+            Color.White);
     }
 
     private int SetNextEnabledEntry(int nextSelectedEntry)

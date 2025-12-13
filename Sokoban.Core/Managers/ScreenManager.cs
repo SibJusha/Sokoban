@@ -24,6 +24,8 @@ public class ScreenManager : DrawableGameComponent
 
     private readonly InputManager inputManager = new();
 
+    public Texture2D WhitePixel { get; private set; }
+
     public ScreenManager(Game game, GraphicsDeviceManager graphicsDeviceManager) 
         : base(game)
     {
@@ -41,24 +43,25 @@ public class ScreenManager : DrawableGameComponent
         SpriteBatch = new SpriteBatch(GraphicsDevice);
         Font = Game.Content.Load<SpriteFont>("Fonts/Hud");
 
+        WhitePixel = new Texture2D(Game.GraphicsDevice, 1, 1);
+        WhitePixel.SetData([Color.White]);
+
         foreach (var screen in screens)
             screen.LoadContent();
     }
 
     public void ShowScreen(Screen screen)
     {
-        // ArgumentNullException.ThrowIfNull(screen);
-
         if (activeScreen != null)
             activeScreen.IsActive = false;
 
+        screens.Add(screen);
+        activeScreen = screen;
         screen.ScreenManager = this;
         screen.IsActive = true;
         screen.Initialize();
-        // screen.LoadContent();
+        screen.LoadContent();
 
-        screens.Add(screen);
-        activeScreen = screen;
     }
 
     public void RemoveScreen(Screen screen)
@@ -70,7 +73,7 @@ public class ScreenManager : DrawableGameComponent
 
         if (activeScreen == screen && screens.Count > 0)
         {
-            activeScreen = screens[screens.Count - 1];
+            activeScreen = screens[^1];
             activeScreen.IsActive = true;
         }
     }
@@ -116,11 +119,8 @@ public class ScreenManager : DrawableGameComponent
     protected override void UnloadContent()
     {
         base.UnloadContent();
-
-        if (activeScreen != null)
-        {
-            activeScreen.UnloadContent();
-        }
+        activeScreen?.UnloadContent();
+        WhitePixel?.Dispose();
     }
 
     public override void Update(GameTime gameTime)
@@ -137,6 +137,9 @@ public class ScreenManager : DrawableGameComponent
                 screen.HandleInput(gameTime, inputManager);
             }               
         }
+
+        if (screens.Count == 0)
+            Game.Exit();
     }
 
     public override void Draw(GameTime gameTime)

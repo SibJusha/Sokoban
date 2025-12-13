@@ -13,7 +13,7 @@ public class SokobanGame : Game
 {
     private readonly GraphicsDeviceManager graphicsDeviceManager;
     public ScreenManager ScreenManager { get; private init; }
-    public LevelManager LevelManager { get; private init; }
+    public LevelsManager LevelsManager { get; private init; }
     
     public SokobanGame()
     {
@@ -29,8 +29,8 @@ public class SokobanGame : Game
         ScreenManager = new ScreenManager(this, graphicsDeviceManager);
         Components.Add(ScreenManager); 
 
-        LevelManager = new LevelManager(this);
-        Services.AddService(LevelManager); 
+        LevelsManager = new LevelsManager(this);
+        Services.AddService(LevelsManager); 
     }
 
     protected override void Initialize()
@@ -57,7 +57,7 @@ public class SokobanGame : Game
     {
         base.LoadContent();
 
-        LevelManager.PreloadLevels();
+        LevelsManager.PreloadLevels();
         TileCreator.Font = Content.Load<SpriteFont>("Fonts/Tiles");
         EntityCreator.Font = Content.Load<SpriteFont>("Fonts/Tiles");
     }

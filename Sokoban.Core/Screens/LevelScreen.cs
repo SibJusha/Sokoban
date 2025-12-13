@@ -33,7 +33,7 @@ public class LevelScreen : Screen
         {
             level.LoadContent();
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             ScreenManager.RemoveScreen(this);
             ScreenManager.ShowScreen(new MessageScreen(

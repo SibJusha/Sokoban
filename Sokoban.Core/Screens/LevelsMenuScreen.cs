@@ -5,20 +5,30 @@ namespace Sokoban.Core.Screens;
 
 public class LevelsMenuScreen : MenuScreen
 {
-    public LevelsMenuScreen(SokobanGame game) : base(game)
+    private readonly LevelsManager levelsManager;
+
+    public LevelsMenuScreen(SokobanGame game)
+        : base(game)
     {
-        foreach (var (levelName, _) in Game.LevelManager.LevelsMap)
-            MenuEntries.Add(new MenuEntry(levelName));
+        this.levelsManager = game.LevelsManager;
+
+        foreach (var levelName in levelsManager.LevelsMap) // optional sorting
+        {
+            menuEntries.Add(new MenuEntry(levelName.Key));
+        }
     }
 
-    // protected override void LoadContent()
-    // {
-    //     base.LoadContent();
-    //     SpriteBatch = new SpriteBatch(GraphicsDevice); 
+    protected override void OnSelectEntry()
+    {
+        var levelName = menuEntries[selectedEntry].Text;
 
-    //     if (activeScreen != null)
-    //     {
-    //         activeScreen.LoadContent();
-    //     }
-    // }
+        if (levelsManager.LevelsMap.TryGetValue(levelName, out var level))
+        {
+            // level.LoadContent();
+            // exit this screen?
+            ScreenManager.ShowScreen(new LevelScreen(Game, level));
+        }
+        else
+            ScreenManager.ShowScreen(new MessageScreen(Game, "No such level"));
+    }
 }

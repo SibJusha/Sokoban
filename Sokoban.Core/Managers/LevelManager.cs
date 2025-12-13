@@ -5,12 +5,12 @@ using Sokoban.Core.Logic;
 
 namespace Sokoban.Core.Managers;
 
-public class LevelManager
+public class LevelsManager
 {
     private readonly Game game;
     public readonly OrderedDictionary<string, Level> LevelsMap = [];
 
-    public LevelManager(Game game)
+    public LevelsManager(Game game)
     {
         this.game = game;
     }

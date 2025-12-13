@@ -19,10 +19,8 @@ public class MainMenuScreen : MenuScreen
 
     private void PlayMenuEntrySelected(object sender, EventArgs e)
     {
-        // TODO: show levels screen
-        // ScreenManager.ShowScreen(this);
-        // ScreenManager.ShowScreen(new LevelsMenuScreen(Game));
-        ScreenManager.ShowScreen(new LevelScreen(Game, Game.LevelManager.LevelsMap["lvl0"]));
+        ScreenManager.ShowScreen(new LevelsMenuScreen(Game));
+        // ScreenManager.ShowScreen(new LevelScreen(Game, Game.LevelManager.LevelsMap["lvl0"]));
     }
 
     private void EditorEntrySelected(object sender, EventArgs e)

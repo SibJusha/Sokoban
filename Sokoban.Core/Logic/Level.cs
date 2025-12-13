@@ -69,7 +69,8 @@ public class Level
         var tileMapLines = root.Element("TileMap").Value
                                .Split(['\r', '\n'], StringSplitOptions.None)
                                .Select(l => l.Trim())
-                               .Where(l => !string.IsNullOrWhiteSpace(l) && !l.StartsWith("<!--"))
+                               .Where(l => !string.IsNullOrWhiteSpace(l) 
+                                    && !l.StartsWith("<!--"))
                                .ToArray() ?? [];
         var width  = root.Attribute("width")?.Value is { } wStr
                              && int.TryParse(wStr, out int w) ? w : 0;
