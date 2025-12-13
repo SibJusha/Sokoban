@@ -37,7 +37,7 @@ jobs:
       run: msbuild ${{ env.SOLUTION }} /t:Restore /p:Configuration=${{ matrix.configuration }}
 
     - name: Build MonoGame content
-      run: dotnet tool install -g dotnet-mgcb && mgcb /@:"/Sokoban.Core/Content/Sokoban.mgcb" /build
+      run: dotnet tool install -g dotnet-mgcb && mgcb /@:"Sokoban.Core/Content/Sokoban.mgcb" /build
 
     - name: Publish DesktopGL project (self-contained win-x64)
       run: |
