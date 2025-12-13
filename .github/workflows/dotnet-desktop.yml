@@ -1,0 +1,51 @@
+name: Build MonoGame (Windows)
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        configuration: [ Release ]
+
+    env:
+      SOLUTION: Sokoban.sln      # change if different
+      FRAMEWORK: net9.0         # replace with your target, e.g. net6.0, net7.0
+      RID: win-x64              # runtime identifier: win-x64, win-x86, linux-x64, osx-x64, etc.
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.FRAMEWORK }}
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Restore
+      run: msbuild ${{ env.SOLUTION }} /t:Restore /p:Configuration=${{ matrix.configuration }}
+
+    - name: Build MonoGame content (if used)
+      run: |
+        dotnet tool restore || true
+        # mgcb /@:"Content/Content.mgcb" /build
+
+    - name: Publish self-contained (Windows)
+      run: |
+        dotnet publish ${{ env.SOLUTION }} -c ${{ matrix.configuration }} -f ${{ env.FRAMEWORK }} -r ${{ env.RID }} --self-contained true -o ./artifacts/publish
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Sokoban-publish
+        path: ./artifacts/publish
