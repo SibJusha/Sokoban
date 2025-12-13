@@ -37,9 +37,7 @@ jobs:
       run: msbuild ${{ env.SOLUTION }} /t:Restore /p:Configuration=${{ matrix.configuration }}
 
     - name: Build MonoGame content
-      run: |
-        dotnet tool restore || true
-        mgcb /@:"Content/Content.mgcb" /build || echo "No MGCB or mgcb tool not present"
+      run: dotnet tool install -g dotnet-mgcb && mgcb /@:"Content/Content.mgcb" /build
 
     - name: Publish DesktopGL project (self-contained win-x64)
       run: |
