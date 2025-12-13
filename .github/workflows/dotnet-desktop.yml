@@ -36,18 +36,18 @@ jobs:
     - name: Restore solution
       run: msbuild ${{ env.SOLUTION }} /t:Restore /p:Configuration=${{ matrix.configuration }}
 
-    - name: Build MonoGame content
-      run: |
-        dotnet tool restore
-        $mgcb = Join-Path $Env:GITHUB_WORKSPACE "Sokoban.Core\Content\Sokoban.mgcb"
-        dotnet tool run mgcb -- /@:"$mgcb" /build
+    # - name: Build MonoGame content
+    #   run: |
+    #     dotnet tool restore
+    #     $mgcb = Join-Path $Env:GITHUB_WORKSPACE "Sokoban.Core\Content\Sokoban.mgcb"
+    #     dotnet tool run mgcb -- /@:"$mgcb" /build
   
-    - name: Publish DesktopGL project (self-contained win-x64)
-      run: |
-        dotnet publish Sokoban.DesktopGL\Sokoban.DesktopGL.csproj -c ${{ matrix.configuration }} -f ${{ env.TFM }} -r ${{ env.RID }} --self-contained true -o ./artifacts/publish/Sokoban.DesktopGL
+    # - name: Publish DesktopGL project (self-contained win-x64)
+    #   run: |
+    #     dotnet publish Sokoban.DesktopGL\Sokoban.DesktopGL.csproj -c ${{ matrix.configuration }} -f ${{ env.TFM }} -r ${{ env.RID }} --self-contained true -o ./artifacts/publish/Sokoban.DesktopGL
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: Sokoban-publish
-        path: ./artifacts/publish
+    # - name: Upload artifact
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: Sokoban-publish
+    #     path: ./artifacts/publish
