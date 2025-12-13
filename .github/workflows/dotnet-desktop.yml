@@ -15,7 +15,7 @@ jobs:
 
     env:
       SOLUTION: Sokoban.sln      # change if different
-      FRAMEWORK: net9.0         # replace with your target, e.g. net6.0, net7.0
+      FRAMEWORK: net9.0.x        # replace with your target, e.g. net6.0, net7.0
       RID: win-x64              # runtime identifier: win-x64, win-x86, linux-x64, osx-x64, etc.
 
     steps:
