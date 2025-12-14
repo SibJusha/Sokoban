@@ -12,7 +12,8 @@ public class LevelsMenuScreen : MenuScreen
     {
         this.levelsManager = game.LevelsManager;
 
-        foreach (var levelName in levelsManager.LevelsMap) // optional sorting
+        // add sorting by filename?
+        foreach (var levelName in levelsManager.LevelsMap) 
         {
             menuEntries.Add(new MenuEntry(levelName.Key));
         }

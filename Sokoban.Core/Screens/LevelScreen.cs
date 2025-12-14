@@ -44,7 +44,7 @@ public class LevelScreen : Screen
 
     public override void HandleInput(GameTime gameTime, InputManager inputManager)
     {
-        stepsCount += level.MakeMovement(gameTime, inputManager) ? 1 : 0;
+        stepsCount += level.TryMovePlayer(gameTime, inputManager) ? 1 : 0;
         if (inputManager.IsCanceled() || inputManager.IsSelected())
             Exit();
     }

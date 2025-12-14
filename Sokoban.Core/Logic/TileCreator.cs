@@ -12,8 +12,6 @@ public static class TileCreator
     {
         return symbol switch
         {
-            // '@': return new (TileType.Player);
-            // 'C' => new Tile(TileType.Crate),
             '*' => new GoalTile(Font, gridPosition),
             '#' => new WallTile(Font, gridPosition),
             ' ' => new FloorTile(Font, gridPosition),

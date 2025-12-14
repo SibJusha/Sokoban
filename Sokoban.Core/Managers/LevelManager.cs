@@ -27,6 +27,7 @@ public class LevelsManager
     {
         var levelFiles = Directory.EnumerateFiles(Path.Combine(game.Content.RootDirectory, "Levels"));
         foreach (var level in levelFiles)
-            LevelsMap.Add(Path.GetFileNameWithoutExtension(level), new Level(level));
+            LevelsMap.Add(Path.GetFileNameWithoutExtension(level).Replace('_',' '), 
+                new Level(level));
     }
 }

@@ -10,7 +10,5 @@ public abstract class Entity : GridObject
     {
     }
 
-    public abstract bool Move();
-
-    public virtual bool CanPush(Direction dir, Level level) => true;
+    // public abstract bool TryMove(Level level, Direction direction);
 }

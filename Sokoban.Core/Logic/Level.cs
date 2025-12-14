@@ -16,6 +16,13 @@ public class Level
     private Tile[,] Grid { get; set; } 
     public string Name { get; set; }
     public string FilePath { get; private set; }
+    private int goalsCount;
+    private int cratesCount;
+    private static readonly HashSet<(Type ent1, Type ent2)> pushablePairs =
+    [
+        // left can push right
+        (typeof(PlayerEntity), typeof(CrateEntity))
+    ];
 
     public int Width
     {
@@ -45,6 +52,22 @@ public class Level
         Name = Path.GetFileNameWithoutExtension(FilePath);
     }
 
+    public bool IsInBounds(Vector2 pos)
+    {
+        return pos.X >= 0 && pos.Y >= 0 && pos.X < Width && pos.Y < Height;
+    }
+
+    public Tile GetTile(Vector2 pos)
+    {
+        return Grid[(int)pos.X, (int)pos.Y];
+    }
+
+    public bool TryGetEntityAt(Vector2 pos, out Entity entity)
+    {
+        entity = entities.FirstOrDefault(e => e.GridPosition == pos);
+        return entity != null;
+    }
+
     public bool IsCompleted()
     {
         foreach (var crate in entities.Where(e => e is CrateEntity))
@@ -55,7 +78,6 @@ public class Level
         return true;
     }
 
-    // TODO: check whether count(goals)=count(crates)
     // TODO: think about better caching
     public void LoadContent()
     {
@@ -87,20 +109,23 @@ public class Level
 
         ParseTiles(tileMapLines);
         ParseEntities(root);
+        if (goalsCount != cratesCount)
+            throw new InvalidDataException(
+                "Count of GoalTiles must be equal to Crates");
     }
 
     public void Update(GameTime gameTime)
     {
     }
 
-    public bool MakeMovement(GameTime gameTime, InputManager inputManager)
+    public bool TryMovePlayer(GameTime gameTime, InputManager inputManager)
     {
         var direction = inputManager.GetDirection();
     
         if (direction == Direction.None)
             return false;
         
-        return TryMoveThere(player, direction, 2);
+        return TryMoveThere(player, direction);
     }
 
     public void UnloadContent()
@@ -109,31 +134,6 @@ public class Level
         player = null;
         Name = null;
         entities.Clear();
-    }
-
-    private bool TryMoveThere(Entity mover, Direction dir, int remainingPushes)
-    {
-        if (remainingPushes < 1)
-            return false;
-
-        var targetPos = mover.GridPosition + dir.ToVector2();
-
-        if (!IsInBounds(targetPos)) 
-            return false;
-
-        var targetTile = GetTile(targetPos);
-        if (!targetTile.IsPassable) 
-            return false;
-
-        if (TryGetEntityAt(targetPos, out var blocking))
-        {
-            if (!blocking.CanPush(dir, this) || !TryMoveThere(blocking, dir, remainingPushes - 1))
-                return false;
-        }
-
-        mover.GridPosition = targetPos;
-
-        return true;
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -159,6 +159,7 @@ public class Level
         if (entitiesElem == null)
             return;
 
+        cratesCount = 0;
         foreach (var entityElem in entitiesElem.Elements())
         {
             if (!int.TryParse(entityElem.Attribute("x")?.Value, out int x)
@@ -172,38 +173,56 @@ public class Level
                 player = entityPlayer;
                 continue;
             }
+            else if (entity is CrateEntity)
+                cratesCount++;
             entities.AddLast(entity);
         }
     }
 
     private void ParseTiles(string[] tileMapLines)
     {
+        goalsCount = 0;
         for (var y = 0; y < Height; ++y)
         {
             for (var x = 0; y < tileMapLines.Length && x < tileMapLines[y].Length; ++x)
             {
                 var symbol = tileMapLines[y][x];
                 Grid[x, y] = TileCreator.CreateTile(symbol, new Vector2(x, y));
+
+                if (Grid[x, y] is GoalTile)
+                    ++goalsCount;
             }
 
-            for (var x = y < tileMapLines.Length ? tileMapLines[y].Length : 0; x < Width; ++x)
-                Grid[x, y] = new EmptyTile(new Vector2(x, y));
+            var x2 = y < tileMapLines.Length ? tileMapLines[y].Length : 0;
+            for (; x2 < Width; ++x2)
+                Grid[x2, y] = new EmptyTile(new Vector2(x2, y));
         }
     }
 
-    private bool IsInBounds(Vector2 pos)
+    private bool TryMoveThere(Entity mover, Direction dir)
     {
-        return pos.X >= 0 && pos.Y >= 0 && pos.X < Width && pos.Y < Height;
+        var targetPos = mover.GridPosition + dir.ToVector2();
+
+        if (!IsInBounds(targetPos)) 
+            return false;
+
+        var targetTile = GetTile(targetPos);
+        if (!targetTile.IsPassable) 
+            return false;
+
+        if (TryGetEntityAt(targetPos, out var blocking))
+        {
+            if (!CanPush(mover, blocking) || !TryMoveThere(blocking, dir))
+                return false;
+        }
+
+        mover.GridPosition = targetPos;
+
+        return true;
     }
 
-    private Tile GetTile(Vector2 pos)
+    private bool CanPush(Entity mover, Entity blocking)
     {
-        return Grid[(int)pos.X, (int)pos.Y];
-    }
-
-    private bool TryGetEntityAt(Vector2 pos, out Entity entity)
-    {
-        entity = entities.FirstOrDefault(e => e.GridPosition == pos);
-        return entity != null;
+        return pushablePairs.Contains((mover.GetType(), blocking.GetType()));
     }
 }

@@ -11,11 +11,6 @@ public class CrateEntity : Entity
         IsPushable = true;
     }
 
-    public override bool Move()
-    {
-        throw new System.NotImplementedException();
-    }
-
     public override void Draw(SpriteBatch spriteBatch)
     {
         if (Texture == null)
