@@ -14,8 +14,6 @@ public class Level
     private LinkedList<Entity> entities = new(); 
     private PlayerEntity player;
     private Tile[,] Grid { get; set; } 
-    public string Name { get; set; }
-    public string FilePath { get; private set; }
     private int goalsCount;
     private int cratesCount;
     private static readonly HashSet<(Type ent1, Type ent2)> pushablePairs =
@@ -24,14 +22,16 @@ public class Level
         (typeof(PlayerEntity), typeof(CrateEntity))
     ];
 
+    public string Name { get; set; }
+    public string FilePath { get; private set; }
+
     public int Width
     {
         get
         {
-            if (Grid != null)
-                return Grid.GetLength(0);
-            else 
+            if (Grid == null)
                 throw new InvalidOperationException("Grid is null");
+            return Grid.GetLength(0);
         }
     }
 
@@ -39,10 +39,9 @@ public class Level
     {
         get
         {
-            if (Grid != null)
-                return Grid.GetLength(1);
-            else
+            if (Grid == null)
                 throw new InvalidOperationException("Grid is null");
+            return Grid.GetLength(1);
         }
     }
 
@@ -83,32 +82,11 @@ public class Level
     {
         var doc = XDocument.Load(FilePath);
         var root = doc.Root;
-        
-        Name = root.Attribute("name")?.Value?.Trim();
-        if (string.IsNullOrEmpty(Name))
-            Name = Path.GetFileNameWithoutExtension(FilePath);
 
-        var tileMapLines = root.Element("TileMap").Value
-                               .Split(['\r', '\n'], StringSplitOptions.None)
-                               .Select(l => l.Trim())
-                               .Where(l => !string.IsNullOrWhiteSpace(l) 
-                                    && !l.StartsWith("<!--"))
-                               .ToArray() ?? [];
-        var width  = root.Attribute("width")?.Value is { } wStr
-                             && int.TryParse(wStr, out int w) ? w : 0;
-        var height = root.Attribute("height")?.Value is { } hStr
-                             && int.TryParse(hStr, out int h) ? h : 0;
-
-        var linesCount = Math.Max(width,  tileMapLines.Max(l => l.Length));
-        var colsCount = Math.Max(height, tileMapLines.Length);
-
-        if (colsCount == 0 || linesCount == 0)
-            throw new InvalidDataException("TileMap is empty");
-
-        Grid = new Tile[linesCount, colsCount];
-
-        ParseTiles(tileMapLines);
+        ParseName(root);
+        ParseTiles(root);
         ParseEntities(root);
+
         if (goalsCount != cratesCount)
             throw new InvalidDataException(
                 "Count of GoalTiles must be equal to Crates");
@@ -153,6 +131,13 @@ public class Level
         player?.Draw(spriteBatch);
     }
 
+    private void ParseName(XElement root)
+    {
+        Name = root.Attribute("name")?.Value?.Trim();
+        if (string.IsNullOrEmpty(Name))
+            Name = Path.GetFileNameWithoutExtension(FilePath);
+    }
+
     private void ParseEntities(XElement root)
     {
         var entitiesElem = root.Element("Entities");
@@ -166,6 +151,9 @@ public class Level
                 || !int.TryParse(entityElem.Attribute("y")?.Value, out int y))
                 continue;
             
+            if (!IsInBounds(new(x, y)))
+                throw new InvalidDataException("Entity is out of bounds.");
+
             var entity = EntityCreator.CreateEntity(entityElem.Name.LocalName,
                                                     new Vector2(x, y));
             if (entity is PlayerEntity entityPlayer)
@@ -179,8 +167,27 @@ public class Level
         }
     }
 
-    private void ParseTiles(string[] tileMapLines)
+    private void ParseTiles(XElement root)
     {
+        var tileMapLines = root.Element("TileMap").Value
+                               .Split(['\r', '\n'], StringSplitOptions.None)
+                               .Select(l => l.Trim())
+                               .Where(l => !string.IsNullOrWhiteSpace(l) 
+                                    && !l.StartsWith("<!--"))
+                               .ToArray() ?? [];
+        var width  = root.Attribute("width")?.Value is { } wStr
+                             && int.TryParse(wStr, out int w) ? w : 0;
+        var height = root.Attribute("height")?.Value is { } hStr
+                             && int.TryParse(hStr, out int h) ? h : 0;
+
+        var linesCount = Math.Max(width,  tileMapLines.Max(l => l.Length));
+        var colsCount = Math.Max(height, tileMapLines.Length);
+
+        if (colsCount == 0 || linesCount == 0)
+            throw new InvalidDataException("TileMap is empty");
+
+        Grid = new Tile[linesCount, colsCount];
+
         goalsCount = 0;
         for (var y = 0; y < Height; ++y)
         {
