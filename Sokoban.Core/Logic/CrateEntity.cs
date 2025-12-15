@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Sokoban.Core.Logic;
+
+namespace Sokoban.Core.Logic;
 
 public class CrateEntity : Entity
 {

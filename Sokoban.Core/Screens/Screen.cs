@@ -4,20 +4,14 @@ using Sokoban.Core.Managers;
 
 namespace Sokoban.Core.Screens;
 
-public abstract class Screen : IDisposable
+public abstract class Screen
 {
     public SokobanGame Game { get; set; }
-
     public ScreenManager ScreenManager { get; set; }
-
-    public bool IsActive { get; set; }
-
-    public bool UpdateWhenInactive { get; set; }
-
-    public bool DrawWhenInactive { get; set; }
-
-    private bool isLoaded = false;
-    public bool IsLoaded => isLoaded;
+    public bool IsActive { get; set; } = false;
+    public bool UpdateWhenInactive { get; set; } = false;
+    public bool DrawWhenInactive { get; set; } = false;
+    public bool IsLoaded { get; private set; } = false;
 
     public Screen(SokobanGame game)
     {
@@ -25,13 +19,11 @@ public abstract class Screen : IDisposable
         ScreenManager = game.ScreenManager;
     }
 
-    public virtual void Dispose() { }
-
     public virtual void Initialize() { }
 
     public virtual void LoadContent()
     {
-        isLoaded = true;
+        IsLoaded = true;
     }
 
     public virtual void UnloadContent() { }

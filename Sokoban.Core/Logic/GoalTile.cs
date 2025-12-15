@@ -4,6 +4,8 @@ using Sokoban.Core.Logic;
 
 public class GoalTile : Tile
 {
+    public bool IsCovered { get; set; }
+
     public GoalTile(SpriteFont font, Vector2 gridPosition) : base(gridPosition)
     {
         Texture = font.Texture;

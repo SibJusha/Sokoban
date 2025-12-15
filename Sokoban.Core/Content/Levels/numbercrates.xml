@@ -1,0 +1,15 @@
+<Level name="Crates with numbers">
+  <TileMap>
+    #######
+    # 1  *#
+    # 2   #
+    #     #
+    #######
+  </TileMap>
+  <Entities>
+    <Player x="5" y="3"/>
+    <Crate x="3" y="2" number="2"/>
+    <Crate x="3" y="1" number="1"/>
+    <Crate x="5" y="2"/>
+  </Entities>
+</Level>

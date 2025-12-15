@@ -1,0 +1,14 @@
+<Level name="basic 0">
+  <TileMap>
+    ######
+    # *   #
+    # *  #
+    ######
+  </TileMap>
+  <Entities>
+    <Player x="4" y="1"/>
+    <Crate x="3" y="2"/>
+    <Crate x="3" y="1"/>
+    <!-- <Crate x="7" y="1"/> -->
+  </Entities>
+</Level>

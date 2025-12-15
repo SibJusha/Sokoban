@@ -68,7 +68,6 @@ public class ScreenManager : DrawableGameComponent
     {
         screen.IsActive = false;
         screen.UnloadContent();
-        screen.Dispose();
         screens.Remove(screen);
 
         if (activeScreen == screen && screens.Count > 0)
@@ -87,7 +86,6 @@ public class ScreenManager : DrawableGameComponent
         screens.RemoveAt(screens.Count - 1);
         screen.IsActive = false;
         screen.UnloadContent();
-        screen.Dispose();
 
         if (screens.Count != 0)
         {
@@ -108,7 +106,6 @@ public class ScreenManager : DrawableGameComponent
         {
             screen.IsActive = false; 
             screen.UnloadContent();
-            screen.Dispose();
         }
         
         activeScreen = null;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -11,16 +12,11 @@ namespace Sokoban.Core.Logic;
 
 public class Level 
 {
-    private LinkedList<Entity> entities = new(); 
+    private readonly LinkedList<Entity> entities = new(); 
     private PlayerEntity player;
     private Tile[,] Grid { get; set; } 
     private int goalsCount;
     private int cratesCount;
-    private static readonly HashSet<(Type ent1, Type ent2)> pushablePairs =
-    [
-        // left can push right
-        (typeof(PlayerEntity), typeof(CrateEntity))
-    ];
 
     public string Name { get; set; }
     public string FilePath { get; private set; }
@@ -80,6 +76,7 @@ public class Level
     // TODO: think about better caching
     public void LoadContent()
     {
+        var stopwatch = Stopwatch.StartNew();
         var doc = XDocument.Load(FilePath);
         var root = doc.Root;
 
@@ -87,6 +84,8 @@ public class Level
         ParseTiles(root);
         ParseEntities(root);
 
+        stopwatch.Stop();
+        Console.WriteLine($"{stopwatch.Elapsed.TotalMilliseconds} ms");
         if (goalsCount != cratesCount)
             throw new InvalidDataException(
                 "Count of GoalTiles must be equal to Crates");
@@ -219,17 +218,15 @@ public class Level
 
         if (TryGetEntityAt(targetPos, out var blocking))
         {
-            if (!CanPush(mover, blocking) || !TryMoveThere(blocking, dir))
+            if (!CollisionManager.CanPush(mover, blocking) || !TryMoveThere(blocking, dir))
                 return false;
         }
 
+        var prevTile = GetTile(mover.GridPosition);
+        CollisionManager.TileActionOnLeave(prevTile, mover);
+        CollisionManager.TileActionOnEnter(targetTile, mover);
         mover.GridPosition = targetPos;
 
         return true;
-    }
-
-    private bool CanPush(Entity mover, Entity blocking)
-    {
-        return pushablePairs.Contains((mover.GetType(), blocking.GetType()));
     }
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level name="basic level 1">
+  <TileMap>
+    ###################
+    #                 #
+    #     $  $  *  *  #
+    #     $           #
+    #  ###   ###     #
+    #  #    *    #   #
+    #  #  $$$    #   #
+    #  #  **     #   #
+    #  ###   ###     #
+    #        $**$    #
+    ###################
+  </TileMap>
+
+  <Player x="3" y="9"> 
+  <!-- <Entities> -->
+    <!-- <Entity type="player" x="3" y="9"/> -->
+  <!-- </Entities> -->
+</Level>
