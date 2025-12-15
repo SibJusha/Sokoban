@@ -1,15 +1,23 @@
-using Microsoft.Xna.Framework;
+using Sokoban.Core.Logic;
 
 namespace Sokoban.Core.Screens;
 
-public class LeaderboardScreen : Screen
+public class LeaderboardScreen : MenuScreen
 {
-    public LeaderboardScreen(SokobanGame game) : base(game)
-    {
-    }
+    private readonly Leaderboard leaderboard;
+    private readonly Level level;
 
-    public override void Draw(GameTime gameTime)
+    public LeaderboardScreen(SokobanGame game, Level level)
+        : base(game)
     {
-        throw new System.NotImplementedException();
+        this.level = level;
+        leaderboard = game.LevelsManager.GetLeaderboard(level);
+
+        for (var i = 0; i < leaderboard.Entries.Count; ++i)
+        {
+            var entry = leaderboard.Entries[i];
+            menuEntries.Add(new MenuEntry($"{i+1}. {entry.Steps} steps - {entry.Time:mm\\:ss\\.ff}"
+                + $" - {entry.Date}"));
+        }
     }
 }

@@ -58,6 +58,9 @@ public class MenuScreen : Screen
 
     public override void Update(GameTime gameTime)
     {
+        if (menuEntries.Count == 0)
+            return;
+
         selectedEntry = SetNextEnabledEntry(selectedEntry);
         
         foreach (var entry in menuEntries)

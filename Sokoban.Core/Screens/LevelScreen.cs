@@ -58,17 +58,8 @@ public class LevelScreen : Screen
         base.Update(gameTime);    
 
         if (level.IsCompleted())
-        {
-            ScreenManager.RemoveScreen(this);
-            ScreenManager.ShowScreen(new MessageScreen(
-                Game,
-                $"""
-                YOU WON!
-                Level {level.Name} completed!
-                Time: {timeTaken:mm\:ss\.ff}
-                Steps: {stepsCount} 
-                """));
-        }
+            OnCompletion();
+
         timeTaken += gameTime.ElapsedGameTime;
     }
 
@@ -97,5 +88,22 @@ public class LevelScreen : Screen
             - font.MeasureString(level.Name).X) / 2, 10);
         ScreenManager.SpriteBatch.DrawStringWithShadow(
             font, level.Name, levelNamePos, Color.White);
+    }
+
+    private void OnCompletion()
+    {
+        var leaderboard = Game.LevelsManager.GetLeaderboard(level);
+        leaderboard.AddScore(stepsCount, timeTaken);
+        Game.LevelsManager.SaveLeaderboard(level);
+
+        ScreenManager.RemoveScreen(this);
+        ScreenManager.ShowScreen(new MessageScreen(
+            Game,
+            $"""
+            YOU WON!
+            Level {level.Name} completed!
+            Time: {timeTaken:mm\:ss\.ff}
+            Steps: {stepsCount} 
+            """));
     }
 }

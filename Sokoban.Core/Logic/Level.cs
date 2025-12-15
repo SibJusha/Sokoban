@@ -4,25 +4,22 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using System.Xml;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Sokoban.Core.Managers;
-using System.Xml.Serialization;
 
 namespace Sokoban.Core.Logic;
 
-public class Level 
+public class Level : IComparable<Level>
 {
     private readonly LinkedList<Entity> entities = []; 
     private PlayerEntity player;
     private Tile[,] Grid { get; set; } 
     private readonly List<GoalTile> goalTiles = []; 
-    // private int goalsCount;
-    // private int cratesCount;
 
     public string Name { get; set; }
     public string FilePath { get; private set; }
+    public Leaderboard Leaderboard { get; private set; }
 
     public int Width
     {
@@ -47,7 +44,14 @@ public class Level
     public Level(string filePath)
     {
         FilePath = filePath;
-        Name = Path.GetFileNameWithoutExtension(FilePath);
+        var doc = XDocument.Load(FilePath);
+        var root = doc.Root;
+        ParseName(root);
+    }
+
+    public int CompareTo(Level other)
+    {
+        return Name.CompareTo(other.Name);    
     }
 
     public bool IsInBounds(Vector2 pos)
@@ -75,17 +79,6 @@ public class Level
         }
 
         return true;
-        // foreach (var crate in entities.Where(e => e is CrateEntity))
-        // {
-        //     if (GetTile(crate.GridPosition) is GoalTile goalTile
-        //         && goalTile.IsCovered)
-        //     {
-        //         continue;
-        //     }
-
-        //     return false; 
-        // }
-        // return true;
     }
 
     // TODO: think about better caching
@@ -95,16 +88,29 @@ public class Level
         var doc = XDocument.Load(FilePath);
         var root = doc.Root;
 
-        ParseName(root);
+        // ParseName(root);
         ParseTiles(root);
         ParseEntities(root);
 
         stopwatch.Stop();
         Console.WriteLine($"{stopwatch.Elapsed.TotalMilliseconds} ms");
-        // if (goalsCount != cratesCount)
+
         if (!AreGoalsAndCratesSame())
             throw new InvalidDataException(
                 "Count of GoalTiles must be equal to Crates");
+
+        LoadLeaderboard();
+    }
+
+    public void SaveLeaderbordToXml()
+    {
+        var doc = XDocument.Load(FilePath); 
+        var root = doc.Root;
+
+        root.Element("Leaderboard")?.Remove();
+        root.Add(Leaderboard.ToXElement());
+
+        doc.Save(FilePath);
     }
 
     public bool TryMovePlayer(GameTime gameTime, InputManager inputManager)
@@ -121,7 +127,6 @@ public class Level
     {
         Grid = null;
         player = null;
-        Name = null;
         entities.Clear();
         goalTiles.Clear();
     }
@@ -143,6 +148,13 @@ public class Level
         player?.Draw(spriteBatch, pos);
     }
 
+    public void LoadLeaderboard()
+    {
+        var doc = XDocument.Load(FilePath);
+        var root = doc.Root;
+        Leaderboard = Leaderboard.FromXElement(root.Element("Leaderboard"));
+    }
+
     private void ParseName(XElement root)
     {
         Name = root.Attribute("name")?.Value?.Trim();
@@ -156,7 +168,6 @@ public class Level
         if (entitiesElem == null)
             return;
 
-        // cratesCount = 0;
         foreach (var entityElem in entitiesElem.Elements())
         {
             if (!int.TryParse(entityElem.Attribute("x")?.Value, out int x)
@@ -180,8 +191,6 @@ public class Level
                     ?? throw new InvalidDataException("Wrong label.");
                 labeledCrateEntity.Label = ch;
             }
-            if (entity is CrateEntity)
-                // cratesCount++;
 
             entities.AddLast(entity);
             CollisionManager.TileActionOnEnter(GetTile(new(x, y)), entity);
@@ -209,7 +218,6 @@ public class Level
 
         Grid = new Tile[linesCount, colsCount];
 
-        // goalsCount = 0;
         for (var y = 0; y < Height; ++y)
         {
             for (var x = 0; y < tileMapLines.Length && x < tileMapLines[y].Length; ++x)
@@ -220,7 +228,6 @@ public class Level
 
                 if (tile is GoalTile goalTile)
                     goalTiles.Add(goalTile);
-                    // ++goalsCount;
             }
 
             var x2 = y < tileMapLines.Length ? tileMapLines[y].Length : 0;

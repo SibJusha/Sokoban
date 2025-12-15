@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
@@ -8,26 +9,46 @@ namespace Sokoban.Core.Managers;
 public class LevelsManager
 {
     private readonly Game game;
-    public readonly OrderedDictionary<string, Level> LevelsMap = [];
+    public readonly SortedSet<Level> Levels = [];
 
     public LevelsManager(Game game)
     {
         this.game = game;
     }
 
-    // public bool LoadLevel(string levelName)
-    // {
-    //     if (LevelsMap.TryGetValue(levelName, out var level))
-    //         return level.LoadContent();
-
-    //     return false;
-    // }
-
     public void PreloadLevels()
     {
         var levelFiles = Directory.EnumerateFiles(Path.Combine(game.Content.RootDirectory, "Levels"));
-        foreach (var level in levelFiles)
-            LevelsMap.Add(Path.GetFileNameWithoutExtension(level).Replace('_',' '), 
-                new Level(level));
+        foreach (var levelPath in levelFiles)
+        {
+            try
+            {
+                var level = new Level(levelPath);
+                Levels.Add(level);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+            // Levels.Add(Path.GetFileNameWithoutExtension(level).Replace('_',' '), 
+            //     new Level(level));
+    }
+
+    public Leaderboard GetLeaderboard(Level level)
+    {
+        if (Levels.Contains(level))
+        {
+            if (level.Leaderboard == null)
+                level.LoadLeaderboard();
+            return level.Leaderboard;
+        }
+        return new Leaderboard(); 
+    }
+
+    public void SaveLeaderboard(Level level)
+    {
+        if (Levels.Contains(level))
+            level.SaveLeaderbordToXml();
     }
 }

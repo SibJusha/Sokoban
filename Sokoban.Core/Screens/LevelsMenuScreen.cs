@@ -1,4 +1,6 @@
+using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Sokoban.Core.Managers;
 
 namespace Sokoban.Core.Screens;
@@ -10,25 +12,40 @@ public class LevelsMenuScreen : MenuScreen
     public LevelsMenuScreen(SokobanGame game)
         : base(game)
     {
-        this.levelsManager = game.LevelsManager;
+        levelsManager = game.LevelsManager;
 
         // add sorting by filename?
-        foreach (var levelName in levelsManager.LevelsMap) 
+        foreach (var level in levelsManager.Levels) 
         {
-            menuEntries.Add(new MenuEntry(levelName.Key));
+            menuEntries.Add(new MenuEntry(level.Name));
         }
+    }
+
+    public override void HandleInput(GameTime gameTime, InputManager inputManager)
+    {
+        base.HandleInput(gameTime, inputManager);
+
+        if (inputManager.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.L))
+        {
+            var level = levelsManager.Levels.ElementAtOrDefault(selectedEntry);
+            if (level != null)
+                ScreenManager.ShowScreen(new LeaderboardScreen(Game, level));
+        }
+    }
+
+    public override void Draw(GameTime gameTime)
+    {
+        base.Draw(gameTime);
+        ScreenManager.SpriteBatch.DrawStringWithShadow(Font, "L: Leaderboard", 
+            new(20, 20), Color.Red); 
     }
 
     protected override void OnSelectEntry()
     {
-        var levelName = menuEntries[selectedEntry].Text;
-
-        if (levelsManager.LevelsMap.TryGetValue(levelName, out var level))
-        {
-            // level.LoadContent();
-            // exit this screen?
+        // var levelName = menuEntries[selectedEntry].Text;
+        var level = levelsManager.Levels.ElementAtOrDefault(selectedEntry);
+        if (level != null)
             ScreenManager.ShowScreen(new LevelScreen(Game, level));
-        }
         else
             ScreenManager.ShowScreen(new MessageScreen(Game, "No such level"));
     }
