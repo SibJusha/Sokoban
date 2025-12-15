@@ -9,14 +9,12 @@ namespace Sokoban.Core.Screens;
 public class LevelScreen : Screen
 {
     private readonly Level level;
-    private readonly SpriteFont tileFont;
     private TimeSpan timeTaken;
     private int stepsCount;
 
     public LevelScreen(SokobanGame game, Level level) : base(game)
     {
         this.level = level;
-        tileFont = Game.Content.Load<SpriteFont>("Fonts/Tiles");
     }
 
     public override void Initialize()
@@ -51,14 +49,13 @@ public class LevelScreen : Screen
 
     public override void Draw(GameTime gameTime)
     {
-        level.Draw(ScreenManager.SpriteBatch);    
+        level.Draw(ScreenManager.SpriteBatch, new(0, ScreenManager.Font.LineSpacing + 10));
         DrawHUD();
     }
 
     public override void Update(GameTime gameTime)
     {
         base.Update(gameTime);    
-        level.Update(gameTime);
 
         if (level.IsCompleted())
         {
@@ -85,14 +82,20 @@ public class LevelScreen : Screen
     {
         var timeToDraw = timeTaken.ToString(@"mm\:ss\.ff");
 
+        var font = ScreenManager.Font;
         var timePos = new Vector2(ScreenManager.ScreenSize.X - 20f 
-            - ScreenManager.Font.MeasureString(timeToDraw).X, 10);
+            - font.MeasureString(timeToDraw).X, 10);
 
         ScreenManager.SpriteBatch.DrawStringWithShadow(
-            ScreenManager.Font, timeToDraw, timePos, Color.White);    
+            font, timeToDraw, timePos, Color.White);    
 
-        var stepsCountPos = timePos + new Vector2(0, ScreenManager.Font.LineSpacing);
+        var stepsCountPos = timePos + new Vector2(0, font.LineSpacing);
         ScreenManager.SpriteBatch.DrawStringWithShadow(
-            ScreenManager.Font, $"{stepsCount} steps", stepsCountPos, Color.White);
+            font, $"{stepsCount} steps", stepsCountPos, Color.White);
+
+        var levelNamePos = new Vector2((ScreenManager.ScreenSize.X 
+            - font.MeasureString(level.Name).X) / 2, 10);
+        ScreenManager.SpriteBatch.DrawStringWithShadow(
+            font, level.Name, levelNamePos, Color.White);
     }
 }

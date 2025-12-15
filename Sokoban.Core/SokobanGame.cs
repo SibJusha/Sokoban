@@ -69,7 +69,7 @@ public class SokobanGame : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.DarkGray);
+        GraphicsDevice.Clear(new(20, 20, 20));
 
         base.Draw(gameTime);
     }

@@ -17,11 +17,12 @@ public abstract class GridObject
         GridPosition = gridPosition;
     }
 
-    public virtual void Draw(SpriteBatch spriteBatch)
+    public virtual void Draw(SpriteBatch spriteBatch, Vector2 pos)
     {
         if (Texture == null)
             return;
         
-        spriteBatch.Draw(Texture, GridPosition * Size, Glyph.BoundsInTexture, Color.Yellow);
+        spriteBatch.Draw(Texture, pos + GridPosition * Size, Glyph.BoundsInTexture, 
+            Color.WhiteSmoke);
     }
 }

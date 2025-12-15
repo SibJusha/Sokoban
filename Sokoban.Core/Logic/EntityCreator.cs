@@ -14,6 +14,7 @@ public static class EntityCreator
         {
             "Player" => new PlayerEntity(Font, gridPosition),
             "Crate" => new CrateEntity(Font, gridPosition),
+            "LabeledCrate" => new LabeledCrateEntity(Font, gridPosition),
             _ => throw new ArgumentException($"Unsupported entity: {type}."),
         };
     }

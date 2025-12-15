@@ -4,19 +4,22 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using System.Xml;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Sokoban.Core.Managers;
+using System.Xml.Serialization;
 
 namespace Sokoban.Core.Logic;
 
 public class Level 
 {
-    private readonly LinkedList<Entity> entities = new(); 
+    private readonly LinkedList<Entity> entities = []; 
     private PlayerEntity player;
     private Tile[,] Grid { get; set; } 
-    private int goalsCount;
-    private int cratesCount;
+    private readonly List<GoalTile> goalTiles = []; 
+    // private int goalsCount;
+    // private int cratesCount;
 
     public string Name { get; set; }
     public string FilePath { get; private set; }
@@ -65,12 +68,24 @@ public class Level
 
     public bool IsCompleted()
     {
-        foreach (var crate in entities.Where(e => e is CrateEntity))
+        foreach (var goalTile in goalTiles)
         {
-            if (GetTile(crate.GridPosition) is not GoalTile)
-                return false; 
+            if (!goalTile.IsCovered)
+                return false;
         }
+
         return true;
+        // foreach (var crate in entities.Where(e => e is CrateEntity))
+        // {
+        //     if (GetTile(crate.GridPosition) is GoalTile goalTile
+        //         && goalTile.IsCovered)
+        //     {
+        //         continue;
+        //     }
+
+        //     return false; 
+        // }
+        // return true;
     }
 
     // TODO: think about better caching
@@ -86,13 +101,10 @@ public class Level
 
         stopwatch.Stop();
         Console.WriteLine($"{stopwatch.Elapsed.TotalMilliseconds} ms");
-        if (goalsCount != cratesCount)
+        // if (goalsCount != cratesCount)
+        if (!AreGoalsAndCratesSame())
             throw new InvalidDataException(
                 "Count of GoalTiles must be equal to Crates");
-    }
-
-    public void Update(GameTime gameTime)
-    {
     }
 
     public bool TryMovePlayer(GameTime gameTime, InputManager inputManager)
@@ -111,23 +123,24 @@ public class Level
         player = null;
         Name = null;
         entities.Clear();
+        goalTiles.Clear();
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch, Vector2 pos)
     {
         for (int y = 0; y < Height; y++)
         {
             for (int x = 0; x < Width; x++)
             {
                 var tile = Grid[x, y];
-                tile?.Draw(spriteBatch);
+                tile?.Draw(spriteBatch, pos);
             }
         }
 
         foreach (var entity in entities)
-            entity?.Draw(spriteBatch);
+            entity?.Draw(spriteBatch, pos);
         
-        player?.Draw(spriteBatch);
+        player?.Draw(spriteBatch, pos);
     }
 
     private void ParseName(XElement root)
@@ -143,7 +156,7 @@ public class Level
         if (entitiesElem == null)
             return;
 
-        cratesCount = 0;
+        // cratesCount = 0;
         foreach (var entityElem in entitiesElem.Elements())
         {
             if (!int.TryParse(entityElem.Attribute("x")?.Value, out int x)
@@ -154,15 +167,24 @@ public class Level
                 throw new InvalidDataException("Entity is out of bounds.");
 
             var entity = EntityCreator.CreateEntity(entityElem.Name.LocalName,
-                                                    new Vector2(x, y));
+                                                    new(x, y));
             if (entity is PlayerEntity entityPlayer)
             {
                 player = entityPlayer;
                 continue;
             }
-            else if (entity is CrateEntity)
-                cratesCount++;
+            
+            else if (entity is LabeledCrateEntity labeledCrateEntity) 
+            {
+                var ch = (entityElem.Attribute("label")?.Value[0]) 
+                    ?? throw new InvalidDataException("Wrong label.");
+                labeledCrateEntity.Label = ch;
+            }
+            if (entity is CrateEntity)
+                // cratesCount++;
+
             entities.AddLast(entity);
+            CollisionManager.TileActionOnEnter(GetTile(new(x, y)), entity);
         }
     }
 
@@ -187,22 +209,38 @@ public class Level
 
         Grid = new Tile[linesCount, colsCount];
 
-        goalsCount = 0;
+        // goalsCount = 0;
         for (var y = 0; y < Height; ++y)
         {
             for (var x = 0; y < tileMapLines.Length && x < tileMapLines[y].Length; ++x)
             {
                 var symbol = tileMapLines[y][x];
-                Grid[x, y] = TileCreator.CreateTile(symbol, new Vector2(x, y));
+                var tile = TileCreator.CreateTile(symbol, new Vector2(x, y));
+                Grid[x, y] = tile;
 
-                if (Grid[x, y] is GoalTile)
-                    ++goalsCount;
+                if (tile is GoalTile goalTile)
+                    goalTiles.Add(goalTile);
+                    // ++goalsCount;
             }
 
             var x2 = y < tileMapLines.Length ? tileMapLines[y].Length : 0;
             for (; x2 < Width; ++x2)
                 Grid[x2, y] = new EmptyTile(new Vector2(x2, y));
         }
+    }
+
+    private bool AreGoalsAndCratesSame()
+    {
+        var crates = entities.Where(e => e is CrateEntity);
+        if (crates.Count() != goalTiles.Count)
+            return false;
+        
+        int labeledGoals = goalTiles.OfType<LabeledGoalTile>().Count();
+        int labeledCrates = crates.OfType<LabeledCrateEntity>().Count();
+        if (labeledGoals != labeledCrates)
+            return false;
+        
+        return true;
     }
 
     private bool TryMoveThere(Entity mover, Direction dir)

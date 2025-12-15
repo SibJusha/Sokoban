@@ -5,6 +5,8 @@ namespace Sokoban.Core.Logic;
 
 public class CrateEntity : Entity
 {
+    public bool IsOnGoal { get; set; } = false;
+
     public CrateEntity(SpriteFont font, Vector2 gridPosition) : base(gridPosition)
     {
         Texture = font.Texture;
@@ -12,11 +14,12 @@ public class CrateEntity : Entity
         IsPushable = true;
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
+    public override void Draw(SpriteBatch spriteBatch, Vector2 pos)
     {
         if (Texture == null)
             return;
         
-        spriteBatch.Draw(Texture, GridPosition * Size, Glyph.BoundsInTexture, Color.Green);
+        var color = IsOnGoal ? Color.Green : Color.Yellow;
+        spriteBatch.Draw(Texture, pos + GridPosition * Size, Glyph.BoundsInTexture, color);
     }
 }

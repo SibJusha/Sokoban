@@ -10,15 +10,21 @@ public static class CollisionManager
     [
         // left can push right
         (typeof(PlayerEntity), typeof(CrateEntity)),
-        (typeof(PlayerEntity), typeof(PlayerEntity))
+        (typeof(PlayerEntity), typeof(PlayerEntity)),
+        (typeof(PlayerEntity), typeof(LabeledCrateEntity)),
     ];
     
     public static void TileActionOnLeave(Tile tile, Entity leaving)
     {
         switch (tile, leaving) 
         {
-            case (GoalTile gt, PlayerEntity): 
+            case (GoalTile gt and not ILabeled, CrateEntity crate and not ILabeled):
                 gt.IsCovered = false;
+                crate.IsOnGoal = false;
+                break;
+            case (LabeledGoalTile gt, LabeledCrateEntity crate) when gt.Label == crate.Label:
+                gt.IsCovered = false;
+                crate.IsOnGoal = false;
                 break;
         }
     }
@@ -27,8 +33,13 @@ public static class CollisionManager
     {
         switch (tile, entering)
         {
-            case (GoalTile gt, PlayerEntity):
+            case (GoalTile gt and not ILabeled, CrateEntity crate and not ILabeled):
                 gt.IsCovered = true;
+                crate.IsOnGoal = true;
+                break;
+            case (LabeledGoalTile gt, LabeledCrateEntity crate) when gt.Label == crate.Label:
+                gt.IsCovered = true;
+                crate.IsOnGoal = true;
                 break;
         }
     }

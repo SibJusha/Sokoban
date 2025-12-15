@@ -16,7 +16,7 @@ public static class TileCreator
             '#' => new WallTile(Font, gridPosition),
             ' ' => new FloorTile(Font, gridPosition),
             '\0' => new EmptyTile(gridPosition),
-            _ when char.IsDigit(symbol) => new EnumeratedGoalTile(Font, gridPosition, symbol),
+            _ when char.IsDigit(symbol) => new LabeledGoalTile(Font, gridPosition, symbol),
             _ => throw new ArgumentException($"Unsupported tile char: {symbol}."),
         };
     }
