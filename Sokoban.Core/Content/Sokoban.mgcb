@@ -26,3 +26,22 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Tiles.spritefont
+
+#begin Levels/lvl0.xml
+/copy:Levels/lvl0.xml
+
+#begin Levels/lvl1.xml
+/copy:Levels/lvl1.xml
+
+#begin Levels/lvl2.xml
+/copy:Levels/lvl2.xml
+
+#begin Levels/lvl3.xml
+/copy:Levels/lvl3.xml
+
+#begin Levels/numbercrates.xml
+/copy:Levels/numbercrates.xml
+
+#begin Levels/numbercrates2.xml
+/copy:Levels/numbercrates2.xml
+

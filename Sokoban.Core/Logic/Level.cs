@@ -115,6 +115,8 @@ public class Level : IComparable<Level>
 
     public bool TryMovePlayer(GameTime gameTime, InputManager inputManager)
     {
+        // TODO: undo movements with U key, add positions history
+        // if (inputManager.IsUndo())
         var direction = inputManager.GetDirection();
     
         if (direction == Direction.None)

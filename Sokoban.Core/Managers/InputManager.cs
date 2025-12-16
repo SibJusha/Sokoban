@@ -64,6 +64,11 @@ public class InputManager
         return IsKeyPressed(Keys.Enter); 
     }
 
+    public bool IsUndo()
+    {
+        return IsKeyPressed(Keys.U);
+    }
+
     public bool IsKeyPressed(Keys key)
     {
         return currentKeyboardState.IsKeyDown(key) 
