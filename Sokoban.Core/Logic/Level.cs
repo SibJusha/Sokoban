@@ -197,6 +197,9 @@ public class Level : IComparable<Level>
             entities.AddLast(entity);
             CollisionManager.TileActionOnEnter(GetTile(new(x, y)), entity);
         }
+
+        if (player == null)
+            throw new InvalidDataException("No player found on level.");
     }
 
     private void ParseTiles(XElement root)

@@ -27,6 +27,12 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Tiles.spritefont
 
+#begin Levels/brokenlvl0.xml
+/copy:Levels/brokenlvl0.xml
+
+#begin Levels/brokenlvl1.xml
+/copy:Levels/brokenlvl1.xml
+
 #begin Levels/lvl0.xml
 /copy:Levels/lvl0.xml
 

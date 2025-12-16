@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level name="Broken level 1">
+  <TileMap>
+    #############
+    #           #
+    #           #
+    #           #
+    #           #
+    #           #
+    #           #
+    #           #
+    #############
+  </TileMap>
+  <Entities>
+  </Entities>
+  <Leaderboard>
+  </Leaderboard>
+</Level>

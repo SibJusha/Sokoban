@@ -13,6 +13,9 @@ public class LeaderboardScreen : MenuScreen
         this.level = level;
         leaderboard = game.LevelsManager.GetLeaderboard(level);
 
+        if (leaderboard.Entries.Count == 0)
+            menuEntries.Add(new MenuEntry("Empty leaderboard"));
+
         for (var i = 0; i < leaderboard.Entries.Count; ++i)
         {
             var entry = leaderboard.Entries[i];
