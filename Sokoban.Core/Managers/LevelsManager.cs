@@ -31,8 +31,6 @@ public class LevelsManager
                 Console.WriteLine(e.Message);
             }
         }
-            // Levels.Add(Path.GetFileNameWithoutExtension(level).Replace('_',' '), 
-            //     new Level(level));
     }
 
     public Leaderboard GetLeaderboard(Level level)

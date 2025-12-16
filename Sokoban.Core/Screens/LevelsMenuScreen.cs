@@ -42,7 +42,6 @@ public class LevelsMenuScreen : MenuScreen
 
     protected override void OnSelectEntry()
     {
-        // var levelName = menuEntries[selectedEntry].Text;
         var level = levelsManager.Levels.ElementAtOrDefault(selectedEntry);
         if (level != null)
             ScreenManager.ShowScreen(new LevelScreen(Game, level));
