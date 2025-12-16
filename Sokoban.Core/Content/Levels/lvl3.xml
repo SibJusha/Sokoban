@@ -4,24 +4,26 @@
     #############
     #           #
     #           #
+    #           #
     #***********#
+    #           #
     #           #
     #           #
     #############
   </TileMap>
   <Entities>
-    <Player x="1" y="5" />
-    <Crate x="1" y="4" />
-    <Crate x="3" y="4" />
-    <Crate x="5" y="4" />
-    <Crate x="7" y="4" />
-    <Crate x="9" y="4" />
-    <Crate x="11" y="4" />
-    <Crate x="2" y="2" />
-    <Crate x="4" y="2" />
-    <Crate x="6" y="2" />
-    <Crate x="8" y="2" />
-    <Crate x="10" y="2" />
+    <Player x="1" y="6" />
+    <Crate x="1" y="5" />
+    <Crate x="3" y="5" />
+    <Crate x="5" y="5" />
+    <Crate x="7" y="5" />
+    <Crate x="9" y="5" />
+    <Crate x="11" y="5" />
+    <Crate x="2" y="3" />
+    <Crate x="4" y="3" />
+    <Crate x="6" y="3" />
+    <Crate x="8" y="3" />
+    <Crate x="10" y="3" />
   </Entities>
   <Leaderboard>
   </Leaderboard>
