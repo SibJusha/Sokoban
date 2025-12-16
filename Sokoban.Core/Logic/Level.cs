@@ -88,7 +88,7 @@ public class Level : IComparable<Level>
         var doc = XDocument.Load(FilePath);
         var root = doc.Root;
 
-        // ParseName(root);
+        ParseName(root);
         ParseTiles(root);
         ParseEntities(root);
 
@@ -242,11 +242,28 @@ public class Level : IComparable<Level>
         if (crates.Count() != goalTiles.Count)
             return false;
         
-        int labeledGoals = goalTiles.OfType<LabeledGoalTile>().Count();
-        int labeledCrates = crates.OfType<LabeledCrateEntity>().Count();
-        if (labeledGoals != labeledCrates)
+        var labeledGoals = goalTiles.OfType<LabeledGoalTile>();
+        var labeledCrates = crates.OfType<LabeledCrateEntity>();
+        if (labeledGoals.Count() != labeledCrates.Count())
             return false;
-        
+
+        var goalCounts = labeledGoals
+            .GroupBy(g => g.Label)
+            .ToDictionary(group => group.Key, group => group.Count());
+
+        var crateCounts = labeledCrates
+            .GroupBy(c => c.Label)
+            .ToDictionary(group => group.Key, group => group.Count());
+
+        if (goalCounts.Count != crateCounts.Count)
+            return false;
+
+        foreach (var (label, goalCount) in goalCounts)
+        {
+            if (!crateCounts.TryGetValue(label, out int crateCount) 
+                || crateCount != goalCount)
+                return false;
+        } 
         return true;
     }
 

@@ -1,21 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Level name="basic level 1">
   <TileMap>
     ###################
     #                 #
-    #     $  $  *  *  #
-    #     $           #
+    #                 #
+    #                 #
     #  ###   ###     #
     #  #    *    #   #
-    #  #  $$$    #   #
+    #  #         #   #
     #  #  **     #   #
     #  ###   ###     #
-    #        $**$    #
+    #         **     #
     ###################
   </TileMap>
-
-  <Player x="3" y="9"> 
-  <!-- <Entities> -->
-    <!-- <Entity type="player" x="3" y="9"/> -->
-  <!-- </Entities> -->
+  <Entities>
+    <Player x="3" y="9" />
+    <Crate x="6" y="6" />
+    <Crate x="7" y="6" />
+    <Crate x="8" y="6" />
+    <Crate x="9" y="9" />
+    <Crate x="11" y="9" />
+  </Entities>
+  <Leaderboard>
+    <Entry Steps="21" Time="00:00:09.10" Date="2025-12-16T14:13:11.9550382+07:00" />
+    <Entry Steps="21" Time="00:00:10.40" Date="2025-12-16T14:13:56.2529708+07:00" />
+  </Leaderboard>
 </Level>

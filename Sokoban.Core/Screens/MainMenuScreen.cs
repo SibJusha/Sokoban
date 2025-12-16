@@ -11,8 +11,7 @@ public class MainMenuScreen : MenuScreen
         : base(game)
     {
         MenuEntries.Add(new MenuEntry("Play", PlayMenuEntrySelected));
-        MenuEntries.Add(new MenuEntry("Editor", EditorEntrySelected));
-        MenuEntries.Add(new MenuEntry("Leaderboard", false));
+        MenuEntries.Add(new MenuEntry("Editor", false));
         MenuEntries.Add(new MenuEntry("Settings", false));
         MenuEntries.Add(new MenuEntry("Exit", ExitOptionSelected));
     }

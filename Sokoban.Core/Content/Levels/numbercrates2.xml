@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Level name="Crates with numbers 2">
+  <TileMap>
+    #########
+    #       #
+    #   1  *#
+    #   2   #
+    #   2   #
+    #       #
+    #########
+  </TileMap>
+  <Entities>
+    <Player x="6" y="3" />
+    <LabeledCrate x="5" y="3" label="2" />
+    <LabeledCrate x="5" y="2" label="1" />
+    <LabeledCrate x="5" y="1" label="2" />
+    <Crate x="5" y="2" />
+  </Entities>
+</Level>

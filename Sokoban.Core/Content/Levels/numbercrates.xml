@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Level name="Crates with numbers">
   <TileMap>
     #######
@@ -7,9 +8,15 @@
     #######
   </TileMap>
   <Entities>
-    <Player x="5" y="3"/>
-    <Crate x="3" y="2" number="2"/>
-    <Crate x="3" y="1" number="1"/>
-    <Crate x="5" y="2"/>
+    <Player x="5" y="3" />
+    <LabeledCrate x="3" y="2" label="2" />
+    <LabeledCrate x="3" y="1" label="1" />
+    <Crate x="5" y="2" />
   </Entities>
+  <Leaderboard>
+    <Entry Steps="6" Time="00:00:02.21" Date="2025-12-16T14:54:32.2862047+07:00" />
+    <Entry Steps="6" Time="00:00:02.48" Date="2025-12-16T05:30:13.3116077+07:00" />
+    <Entry Steps="6" Time="00:00:04.30" Date="2025-12-16T05:45:36.0687540+07:00" />
+    <Entry Steps="11" Time="00:00:04.56" Date="2025-12-16T05:30:43.0423110+07:00" />
+  </Leaderboard>
 </Level>
